@@ -1,8 +1,0 @@
-{  
-   "basePackage":"co.com.zamora.microservice.resolveEnigmaApi",
-   "configPackage":"co.com.zamora.microservice.resolveEnigmaApi.config",
-   "apiPackage":"co.com.zamora.microservice.resolveEnigmaApi.api",
-   "modelPackage":"co.com.zamora.microservice.resolveEnigmaApi.model",
-   "groupId":"co.com.zamora.service.resolveEnigmaApi",
-   "artifactId":"resolve-enigma-api"
-}
