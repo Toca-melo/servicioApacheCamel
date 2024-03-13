@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -54,5 +55,10 @@ public class GetStepApiController implements GetStepApi {
         List<JsonApiBodyResponseSuccess> responseList = Collections.singletonList(responseBody);
         return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
-
+    
+    @GetMapping (value = "/mensaje-step3")
+    public ResponseEntity<String>getPaso(){
+    	return new ResponseEntity<>("Paso 3: Cerrar la puerta", HttpStatus.OK);
+    }
+    
 }
