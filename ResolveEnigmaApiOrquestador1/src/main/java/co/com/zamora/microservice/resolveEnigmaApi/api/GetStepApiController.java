@@ -1,5 +1,7 @@
 package co.com.zamora.microservice.resolveEnigmaApi.api;
 
+import co.com.zamora.microservice.resolveEnigmaApi.model.GetEnigmaRequest; 
+import co.com.zamora.microservice.resolveEnigmaApi.model.GetEnigmaStepResponse;
 import co.com.zamora.microservice.resolveEnigmaApi.model.JsonApiBodyRequest;
 import co.com.zamora.microservice.resolveEnigmaApi.model.JsonApiBodyResponseErrors;
 import co.com.zamora.microservice.resolveEnigmaApi.model.JsonApiBodyResponseSuccess;
@@ -7,6 +9,9 @@ import co.com.zamora.microservice.resolveEnigmaApi.service.ResolveEnigmaService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.FluentProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,36 +29,48 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-03-12T21:47:02.846-05:00[America/Bogota]")
 @Controller
 public class GetStepApiController implements GetStepApi {
 
-    private static final Logger log = LoggerFactory.getLogger(GetStepApiController.class);
+	private static final Logger log = LoggerFactory.getLogger(GetStepApiController.class);
 
-    private final ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-    private final HttpServletRequest request;
+	private final HttpServletRequest request;
+	
+	private Object response;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public GetStepApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
+	@EndpointInject(uri = "direct:resolve-enigma")
+	private FluentProducerTemplate producerTemplateResolveEnigma;
 
-    public ResponseEntity<List<JsonApiBodyResponseSuccess>> getStep(@ApiParam(value = "request body get enigma step" ,required=true )  @Valid @RequestBody JsonApiBodyRequest body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<List<JsonApiBodyResponseSuccess>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-    
-    @GetMapping (value = "/orquesta")
-    public ResponseEntity<String>getOrquesta(){
-    	ResolveEnigmaService resolveEnigmaService = new ResolveEnigmaService();
-    	String response = resolveEnigmaService.Orquestador();
-    	System.out.println(response);
-    	
-    	return new ResponseEntity<>(response, HttpStatus.OK);
+	@org.springframework.beans.factory.annotation.Autowired
+	public GetStepApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+		this.objectMapper = objectMapper;
+		this.request = request;
+	}
+
+	@GetMapping(value = "/orquesta")
+	public ResponseEntity<String> getOrquesta() {
+		ResolveEnigmaService resolveEnigmaService = new ResolveEnigmaService();
+		String response = resolveEnigmaService.Orquestador();
+		System.out.println(response);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	public ResponseEntity<?> getStep(@ApiParam(value="body",required=true) @Valid @RequestBody JsonApiBodyRequest body) {
+        try {
+            response = producerTemplateResolveEnigma.withBody(body).request();
+            return new ResponseEntity<JsonApiBodyResponseSuccess>((JsonApiBodyResponseSuccess)response, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Couldn't serialize response for content type application/json", e);
+            return new ResponseEntity<JsonApiBodyResponseErrors>((JsonApiBodyResponseErrors)response,HttpStatus.FAILED_DEPENDENCY);
+        }
     }
 
 }

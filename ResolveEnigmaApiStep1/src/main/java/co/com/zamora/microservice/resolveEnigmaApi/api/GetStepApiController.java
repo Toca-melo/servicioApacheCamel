@@ -43,22 +43,21 @@ public class GetStepApiController implements GetStepApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<JsonApiBodyResponseSuccess>> getStep(@ApiParam(value = "request body get enigma step" ,required=true )  @Valid @RequestBody JsonApiBodyRequest body) {
-    	List<GetEnigmaRequest> enigma = body.getData();
+    public ResponseEntity<JsonApiBodyResponseSuccess> getStep(@ApiParam(value = "body", required = true) @Valid @RequestBody JsonApiBodyRequest body) {
+        List<GetEnigmaRequest> enigma = body.getData();
         GetEnigmaStepResponse enigmaStepResponse = new GetEnigmaStepResponse();
 
         enigmaStepResponse.setHeader(enigma.get(0).getHeader());
-        enigmaStepResponse.setAnswer("Paso 1: Abrir el refrigerador ");
-        JsonApiBodyResponseSuccess responseBody = new JsonApiBodyResponseSuccess();
+        enigmaStepResponse.setAnswer("Paso 1: Abrir el refrigerador");
 
+        JsonApiBodyResponseSuccess responseBody = new JsonApiBodyResponseSuccess();
         responseBody.addDataItem(enigmaStepResponse);
-        List<JsonApiBodyResponseSuccess> responseList = Collections.singletonList(responseBody);
-        return new ResponseEntity<>(responseList, HttpStatus.OK);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
     
     @GetMapping (value = "/mensaje-step1")
     public ResponseEntity<String>getPaso(){
-    	return new ResponseEntity<>("Paso 1: Abrir el refrigerador ", HttpStatus.OK);
+    	return new ResponseEntity<>("Paso 1: Abrir el refrigerador", HttpStatus.OK);
     }
     
 
